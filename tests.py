@@ -47,3 +47,9 @@ class Test:
         k = 4
         x = Parser(regular, k)
         assert [x.get_answer(i) for i in range(k)] == ['INF', 'INF', 2, 'INF']
+
+    def test_7(self):
+        regular = 'aa.bbb..+*'
+        k = 10
+        x = Parser(regular, k)
+        assert [x.get_answer(i) for i in range(k)] == [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
