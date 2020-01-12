@@ -56,7 +56,7 @@ class State:
                 cost = value * cnt
                 items.append((weight, cost))
 
-        dp = [['INF' for i in range(len(items))] for j in range(len(items))]
+        dp = [['INF' for i in range(k)] for j in range(len(items))]
 
         for index, item in enumerate(items):
             dp[index][item[0]] = item[1]
@@ -64,18 +64,21 @@ class State:
         for i in range(1, len(items)):
             weight = items[i][0]
             cost = items[i][1]
-            for w in range(len(items)):
+            for w in range(k):
                 if dp[i - 1][w] != 'INF':
                     dp[i][w] = dp[i - 1][w]
-            for w in range(weight, len(items)):
-                if dp[i - 1][w - weight] != 'INF':
-                    if dp[i][w] == 'INF' or dp[i][w] > dp[i - 1][w - weight] + cost:
-                        dp[i][w] = dp[i - 1][w - weight] + cost
+            for w in range(k):
+                old_w = w - weight
+                if old_w < 0:
+                    old_w += k
+                if dp[i - 1][old_w] != 'INF':
+                    if dp[i][w] == 'INF' or dp[i][w] > dp[i - 1][old_w] + cost:
+                        dp[i][w] = dp[i - 1][old_w] + cost
 
         result = State()
 
         for i in range(len(items)):
-            for j in range(len(items)):
+            for j in range(k):
                 if dp[i][j] != 'INF':
                     result.set_value(j % k, dp[i][j])
 
