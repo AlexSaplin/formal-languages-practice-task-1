@@ -48,32 +48,34 @@ class State:
         if not self.remainders.keys():
             raise StateException('State is empty. You cannot use star.')
 
-        items = []
+        items = ['INF' for i in range(k)]
 
         for remainder, value in self.items():
             for cnt in range(0, k):
                 weight = (remainder * cnt) % k
                 cost = value * cnt
-                items.append((weight, cost))
+                if items[weight] == 'INF' or items[weight] > cost:
+                    items[weight] = cost
 
         dp = [['INF' for i in range(k)] for j in range(len(items))]
 
-        for index, item in enumerate(items):
-            dp[index][item[0]] = item[1]
+        for weight, cost in enumerate(items):
+            dp[weight][weight] = cost
 
-        for i in range(1, len(items)):
-            weight = items[i][0]
-            cost = items[i][1]
+        for weight in range(1, k):
+            i = weight
+            cost = items[weight]
             for w in range(k):
                 if dp[i - 1][w] != 'INF':
                     dp[i][w] = dp[i - 1][w]
-            for w in range(k):
-                old_w = w - weight
-                if old_w < 0:
-                    old_w += k
-                if dp[i - 1][old_w] != 'INF':
-                    if dp[i][w] == 'INF' or dp[i][w] > dp[i - 1][old_w] + cost:
-                        dp[i][w] = dp[i - 1][old_w] + cost
+            if cost != 'INF':
+                for w in range(k):
+                    old_w = w - weight
+                    if old_w < 0:
+                        old_w += k
+                    if dp[i - 1][old_w] != 'INF':
+                        if dp[i][w] == 'INF' or dp[i][w] > dp[i - 1][old_w] + cost:
+                            dp[i][w] = dp[i - 1][old_w] + cost
 
         result = State()
 
